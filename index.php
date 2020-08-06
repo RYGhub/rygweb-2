@@ -14,7 +14,9 @@
 			<script src="javascripts/controllers/MembriController.js"></script>
 			<script src="javascripts/controllers/GamesController.js"></script>
 			<script src="javascripts/controllers/FondiController.js"></script>
+			<script src="javascripts/controllers/NewsController.js"></script>
 		<script src="javascripts/hide.js"></script>
+		<script src="vote.js"></script>
 	</head>
 	<body ng-app="royal">
 		<nav class="navbar navbar-royalgames">
@@ -29,8 +31,8 @@
 					<ul class="nav navbar-nav">
 						<li><a href=# onclick="show(&quot;#chisiamo&quot;)">Chi siamo</a></li>
 						<li><a href=# onclick="show(&quot;#membri&quot;)">Membri</a></li>
-						<li><a href=# onclick="show(&quot;#giochi&quot;)">Giochi</a></li>
-						<li><a href=# onclick="show(&quot;#recensioni&quot;)">Recensioni</a></li>
+						<!--li><a href=# onclick="show(&quot;#giochi&quot;)">Giochi</a></li-->
+						<!--li><a href=# onclick="show(&quot;#recensioni&quot;)">Recensioni</a></li-->
                         <li><a href=# onclick="show(&quot;#votazioni&quot;)"><!--span class="glyphicon glyphicon-exclamation-sign importante nonvotato"></span>&nbsp;-->Votazioni</a></li>
 						<li><a href=# onclick="show(&quot;#fondi&quot;)">Fondi</a></li>
 						<li><a href="http://steamcommunity.com/groups/royalgamescastle">Steam</a></li>
@@ -49,31 +51,55 @@
 			</div>
 		</div>
 		<div class="container">
-			<div id="main" class="gruppo">
+			<div id="main" class="gruppo" ng-controller="NewsController">
 				<p>
 					Benvenuto al sito web della Royal Games, la community di gamers!
 					Clicca uno dei tasti in cima alla pagina per navigare il sito!
 				<p>
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-6">
 						<h3>
 							Notizie
 						</h3>
 						<div>
-							Una votazione è terminata:
-							<div class="voto">
-								<p>
-									Vorresti aggiungere <a href="http://steamcommunity.com/id/iEmax/">iEmax</a> alla Royal Games?
-								</p>
-								<button class="btn btn-votazione btn-votosi disabled">
-									<span class="glyphicon glyphicon-ok"></span>&nbsp;
-									6
-								</button>
-								<button class="btn btn-votazione btn-votono disabled">
-									<span class="glyphicon glyphicon-remove"></span>&nbsp;
-									1
-								</button>
+							<div ng-repeat="news in list" class="voto">
+								<div class="row news">
+									<div class="col-xs-1 time text-right">
+										{{news.time | date}}
+									</div>
+									<div class="col-xs-11" ng-if="news.text">
+										{{news.text}}
+									</div>
+									<div class="col-xs-7" ng-if="news.voto">
+										<b>Votazione terminata:</b> {{news.voto}}
+									</div>
+									<div class="col-xs-2 newssi" ng-if="news.voto">
+										<span class="glyphicon glyphicon-ok"></span>&nbsp;{{news.si}}
+									</div>
+									<div class="col-xs-2 newsno" ng-if="news.voto">
+										<span class="glyphicon glyphicon-remove"></span>&nbsp;{{news.no}}
+									</div>
+								</div>
 							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<h3>
+							Eventi
+						</h3>
+						<div>
+							<a ng-repeat="event in events" href="{{event.link}}">
+								<div class="voto">
+									<div class="row news">
+										<div class="col-xs-1 time text-right">
+											{{event.time | date}}
+										</div>
+										<div class="col-xs-11" ng-if="event.text">
+											{{event.text}}
+										</div>
+									</div>
+								</div>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -141,7 +167,7 @@
 							Mumble è un programma per il <abbr title="Voice over IP" class="initialism">VoIP</abbr> usato dai membri della community per parlare tra di loro.
 						</p>
 						<p>
-							Puoi connetterti al nostro server cliccando <a href="mumble://falcon.mumbleboxes.com:36229?version=1.2.3">qui</a> oppure <a href="https://dl.dropboxusercontent.com/u/23313381/mumble.png">aggiungendo il server ai preferiti</a>.
+							Puoi connetterti al nostro server cliccando <a href="mumble://royalgames.ddns.net?title=Royal%20Games&version=1.2.0">qui</a> oppure <a href="https://dl.dropboxusercontent.com/u/23313381/mumble.png">aggiungendo il server ai preferiti</a>.
 						</p>
 						<p>
 							<a class="btn btn-default wt" href="http://wiki.mumble.info/wiki/Main_Page" target="_blank" onMouseOver="$(this).tooltip()" title="Scarica"><span class="glyphicon glyphicon-download-alt"></span></a>
@@ -204,7 +230,7 @@
 				</h2>
 				<div class="row row-membri" ng-repeat="array in membri">
 					<div class="col-md-4" ng-repeat="membro in array track by $index">
-						<img class="profile" ng-src="https://dl.dropboxusercontent.com/u/23313381/logo/Personali/{{ membro.icon }}.png"></i>
+						<img class="profile" ng-src="https://dl.dropboxusercontent.com/u/23313381/logo/Personali/{{ membro.icon }}.png"></img>
 						<h3>
 							{{ membro.name }}
 						</h3>
@@ -212,10 +238,10 @@
 							{{ membro.desc }}
 						</p>
 						<p>
-							<a class="btn btn-default wt" href="http://steamcommunity.com/profiles/{{membro.steamid}}" ng-hide="!membro.steamid" onMouseOver="$(this).tooltip()" title="Visualizza profilo"><span class="glyphicon glyphicon-user"></span></a>
+							<a class="btn btn-default wt" href="http://steamcommunity.com/profiles/{{membro.steamid}}" ng-hide="!membro.steamid" target="_blank" onMouseOver="$(this).tooltip()" title="Visualizza profilo"><span class="glyphicon glyphicon-user"></span></a>
 							<a class="btn btn-default wt" href="steam://friends/add/{{membro.steamid}}" ng-hide="!membro.steamid" onMouseOver="$(this).tooltip()" title="Aggiungi agli amici"><span class="glyphicon glyphicon-heart"></span></a>
-							<a class="btn btn-default wt" href="steam://friends/message/{{membro.steamid}}" ng-hide="!membro.steamid" onMouseOver="$(this).tooltip()" title="Invia un messaggio"><span class="glyphicon glyphicon-envelope"></span></a>
-							<a class="btn btn-default wt" href="http://steamcommunity.com/profiles/{{membro.steamid}}/inventory/" ng-hide="!membro.steamid" onMouseOver="$(this).tooltip()" title="Inventario"><span class="glyphicon glyphicon-th"></span></a>
+							<a class="btn btn-default wt" href="tg://resolve?domain={{membro.telegram}}" ng-hide="!membro.telegram" onMouseOver="$(this).tooltip()" title="Invia un messaggio su Telegram"><span class="glyphicon glyphicon-envelope"></span></a>
+							<a class="btn btn-default wt" href="http://steamcommunity.com/profiles/{{membro.steamid}}/inventory/" ng-hide="!membro.steamid" target="_blank" onMouseOver="$(this).tooltip()" title="Inventario"><span class="glyphicon glyphicon-th"></span></a>
 							<a class="btn btn-default wt" href="{{membro.steamtrade}}" ng-hide="!membro.steamtrade" target="_blank" onMouseOver="$(this).tooltip()" title="Offri uno scambio"><span class="glyphicon glyphicon-transfer"></span></a>
 						</p>
 						<div ng-hide="!membro.csgo">
@@ -317,7 +343,7 @@
 					Se sei un membro, puoi tenere aggiornate queste informazioni modificando il file MembriController.js su Dropbox!
 				</h6>
 			</div>
-			<div id="giochi" class="gruppo" ng-controller="GamesController">
+			<!--div id="giochi" class="gruppo" ng-controller="GamesController">
 				<h1>
 					Giochi
 				</h1>
@@ -342,26 +368,29 @@
 				<h6>
 					Se sei un membro, puoi aggiungere giochi a questo elenco modificando il file GamesController.js su Dropbox!
 				</h6>
-			</div>
+			</div-->
 			<div id="votazioni" class="gruppo">
 				<!--div>
 					<h2>
 						Votazioni in corso
 					</h2>
 					<p>
-						Ho appena scoperto che devo comunicarvi che questo sito usa cookie per le votazioni. Oh, well.
+						Questo sito usa cookie dalla durata di 3 giorni per le votazioni. NON CANCELLATELI SE AVETE VOTATO E NON RIVOTATE SE LI AVETE CANCELLATI PERCHE' VI SCOPRO.
 					</p>
 					<div class="voto">
 						<p>
-							Vorresti aggiungere <a href="http://steamcommunity.com/profiles/76561198089120441">Saitorlock</a> alla Royal Games?
+							Aggiungere <a href="http://steamcommunity.com/profiles/76561198123018368/">un coso cattivissimo chiamato Benna2</a> alla Royal Games?
 						</p>
 						<p>
-							E' un compagno di classe di Cosimo.
+							Non è il Benna del Fermi, è un altro Benna amico di Sensei!
+						</p>
+						<p>
+							Se non lo conoscete, forse sarebbe meglio parlargli prima di votare... ma fate come volete.
 						</p>
 						<button class="btn btn-votazione btn-votosi incorso" onClick="vota('si')">
 							<span class="glyphicon glyphicon-ok"></span>&nbsp;
 							<span id="voto-si">
-								<!?php
+								<-?php
 									$file = file_get_contents("si.json");
 									echo $file;
 								?>
@@ -370,17 +399,14 @@
 						<button class="btn btn-votazione btn-votono incorso" onClick="vota('no')">
 							<span class="glyphicon glyphicon-remove"></span>&nbsp;
 							<span id="voto-no">
-								<!?php
+								<-?php
 									$file = file_get_contents("no.json");
 									echo $file;
 								?>
 							</span>
 						</button>
-						<!--button class="btn btn-votazione btn-votoskip incorso" onClick="vota('skip')">
-							Astieniti
-						</button-->
-						<!--script>
-							if(document.cookie.indexOf("voto-sherlock") >= 0)
+						<script>
+							if(document.cookie.indexOf("bennatre") >= 0)
 							{
 								cookie();
 							}
@@ -391,6 +417,32 @@
 					<h2>
 						Votazioni concluse
 					</h2>
+					<div class="voto">
+						<p>
+							Mettere come requisito per entrare in Royal Games avere finito la quinta elementare?
+						</p>
+						<button class="btn btn-votazione btn-votosi disabled">
+							<span class="glyphicon glyphicon-ok"></span>&nbsp;
+							3
+						</button>
+						<button class="btn btn-votazione btn-votono disabled">
+							<span class="glyphicon glyphicon-remove"></span>&nbsp;
+							0
+						</button>
+					</div>
+					<div class="voto">
+						<p>
+							Vorresti aggiungere <a href="http://steamcommunity.com/profiles/76561198154175301/">Alleanderl</a>, <a href="http://steamcommunity.com/profiles/76561198131868211/">Boni</a> e <a href="#">MrDima</a> alla Royal Games?
+						</p>
+						<button class="btn btn-votazione btn-votosi disabled">
+							<span class="glyphicon glyphicon-ok"></span>&nbsp;
+							6
+						</button>
+						<button class="btn btn-votazione btn-votono disabled">
+							<span class="glyphicon glyphicon-remove"></span>&nbsp;
+							0
+						</button>
+					</div>
 					<div class="voto">
 						<p>
 							Vorresti aggiungere <a href="http://steamcommunity.com/id/iEmax/">iEmax</a> alla Royal Games?
@@ -445,7 +497,7 @@
 					</div>
 				</div>
 			</div>
-			<div id="recensioni" class="gruppo">
+			<!--div id="recensioni" class="gruppo">
 				<h1>
 					Recensioni [IN COSTRUZIONE]
 				</h1>
@@ -479,7 +531,7 @@
 						</h4>
 					</div>
 				</div>
-			</div>
+			</div-->
 			<div id="fondi" class="gruppo" ng-controller="FondiController">
 				<h1>
 					Fondi
